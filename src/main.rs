@@ -3,6 +3,7 @@ use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::*;
 use piston::input::*;
 use piston::window::WindowSettings;
+use rand::prelude::*;
 
 const BG_COLOR: [f32; 4] = [0.1; 4];
 const SNAKE_COLOR: [f32; 4] = [0.3, 0.3, 0.9, 1.0];
@@ -34,7 +35,21 @@ impl GameState {
         }
     }
 
-    fn randomize_food(&mut self) {}
+    fn randomize_food(&mut self) {
+        let mut rng = thread_rng();
+        let mut new_loc = Self::get_new_food_loc(&mut rng);
+        while self.tail.contains(&new_loc) {
+            new_loc = Self::get_new_food_loc(&mut rng);
+        }
+        self.fpos = new_loc;
+    }
+
+    fn get_new_food_loc(rng: &mut ThreadRng) -> [f64; 2] {
+        [
+            rng.gen_range(0..PLAYFIELD_WIDTH as usize) as f64,
+            rng.gen_range(0..PLAYFIELD_HEIGHT as usize) as f64,
+        ]
+    }
 
     fn update(&mut self, dt: f64) {
         self.interval_time += dt;
@@ -55,6 +70,7 @@ impl GameState {
 
         if self.spos == self.fpos {
             self.randomize_food();
+            self.tail_length += 1;
         }
     }
 
