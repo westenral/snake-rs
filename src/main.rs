@@ -17,7 +17,9 @@ const PLAYFIELD_HEIGHT: f64 = 480.0 / CELL_SIZE;
 const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
 
 struct GameState {
+    is_game_running: bool,
     spos: [f64; 2],
+    pspos: [f64; 2],
     sdir: [f64; 2],
     next_sdir: [f64; 2],
     tail: VecDeque<[f64; 2]>,
@@ -29,7 +31,9 @@ struct GameState {
 impl GameState {
     fn new() -> Self {
         GameState {
+            is_game_running: true,
             spos: [16.0, 12.0],
+            pspos: [16.0, 12.0],
             sdir: [0.0; 2],
             next_sdir: [0.0; 2],
             tail: Vec::new().into(),
@@ -75,7 +79,18 @@ impl GameState {
         self.sdir = self.next_sdir;
     }
 
+    // Call before updating snake position
+    fn update_tail(&mut self) {
+        if self.tail_length == 0 {
+            return;
+        }
+        self.tail.push_back(self.spos);
+        self.tail.rotate_right(1);
+        self.tail.pop_back();
+    }
+
     fn update_snake_position(&mut self) {
+        self.pspos = self.spos;
         self.spos[0] += self.sdir[0];
         self.spos[1] += self.sdir[1];
         // branchless screen wrapping
@@ -87,25 +102,23 @@ impl GameState {
                 + -((self.spos[1] > PLAYFIELD_HEIGHT - 1.0) as u8 as f64));
     }
 
-    fn check_food_collisision(&mut self) {
+    fn food_collisision(&mut self) {
         if self.spos == self.fpos {
             self.randomize_food();
             self.tail_length += 1;
-            self.tail.push_back(self.spos);
+            self.tail.push_back(self.pspos);
         }
     }
 
-    // Call before updating snake position
-    fn update_tail(&mut self) {
-        if self.tail_length == 0 {
-            return;
-        }
-        self.tail.push_back(self.spos);
-        self.tail.rotate_right(1);
-        self.tail.pop_back();
+    fn tail_collision(&mut self) {
+        println!("{:?}, {:?}", self.spos, self.tail);
+        self.is_game_running = !self.tail.contains(&self.spos)
     }
 
     fn update(&mut self, dt: f64) {
+        if !self.is_game_running {
+            return;
+        }
         if !self.check_if_past_timestep(dt) {
             return;
         }
@@ -113,7 +126,8 @@ impl GameState {
         self.update_tail();
         self.limit_direction();
         self.update_snake_position();
-        self.check_food_collisision();
+        self.food_collisision();
+        self.tail_collision();
     }
 
     fn button_event(&mut self, args: ButtonArgs) {
