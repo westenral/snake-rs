@@ -10,10 +10,12 @@ use rand::prelude::*;
 const BG_COLOR: [f32; 4] = [0.1; 4];
 const SNAKE_COLOR: [f32; 4] = [0.3, 0.3, 0.9, 1.0];
 const FOOD_COLOR: [f32; 4] = [0.7, 0.4, 0.1, 1.0];
-const CELL_SIZE: f64 = 20.0;
+const CELL_SIZE: f64 = 40.0;
 const CELL_EDGE_BUFFER: f64 = 2.0;
-const PLAYFIELD_WIDTH: f64 = 640.0 / CELL_SIZE;
-const PLAYFIELD_HEIGHT: f64 = 480.0 / CELL_SIZE;
+const SCREEN_WIDTH: f64 = 1280.0;
+const SCREEN_HEIGHT: f64 = 720.0;
+const PLAYFIELD_WIDTH: f64 = SCREEN_WIDTH / CELL_SIZE;
+const PLAYFIELD_HEIGHT: f64 = SCREEN_HEIGHT / CELL_SIZE;
 const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
 
 struct GameState {
@@ -32,13 +34,13 @@ impl GameState {
     fn new() -> Self {
         GameState {
             is_game_running: true,
-            spos: [16.0, 12.0],
-            pspos: [16.0, 12.0],
+            spos: [PLAYFIELD_WIDTH / 2.0, PLAYFIELD_HEIGHT / 2.0],
+            pspos: [PLAYFIELD_WIDTH / 2.0, PLAYFIELD_HEIGHT / 2.0],
             sdir: [0.0; 2],
             next_sdir: [0.0; 2],
             tail: Vec::new().into(),
             tail_length: 0,
-            fpos: [8.0; 2],
+            fpos: [PLAYFIELD_WIDTH / 2.0 - 4.0, PLAYFIELD_HEIGHT / 2.0 - 4.0],
             interval_time: 0.0,
         }
     }
@@ -164,6 +166,13 @@ impl GameState {
                     g,
                 );
             }
+
+            /*
+            for section in tail_vec.windows(3) {
+
+            }
+                */
+
             rectangle(
                 FOOD_COLOR,
                 [
@@ -181,7 +190,7 @@ impl GameState {
 
 fn main() {
     let opengl = OpenGL::V3_2;
-    let mut window: GlfwWindow = WindowSettings::new("Snake", [640, 480])
+    let mut window: GlfwWindow = WindowSettings::new("Snake", [SCREEN_WIDTH, SCREEN_HEIGHT])
         .exit_on_esc(true)
         .resizable(false)
         .graphics_api(opengl)
