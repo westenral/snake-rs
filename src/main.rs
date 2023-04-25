@@ -53,7 +53,9 @@ impl GameState {
     fn randomize_food(&mut self) {
         let mut rng = thread_rng();
         let mut new_loc = Self::get_new_food_loc(&mut rng);
-        while self.tail.contains(&new_loc) {
+        let mut tail = self.tail.clone();
+        tail.push_back(self.spos);
+        while tail.contains(&new_loc) {
             new_loc = Self::get_new_food_loc(&mut rng);
         }
         self.fpos = new_loc;
