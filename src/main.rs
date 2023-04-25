@@ -44,7 +44,7 @@ impl GameState {
 
         self.spos[0] += self.sdir[0];
         self.spos[1] += self.sdir[1];
-        // branchless wrapping
+        // branchless screen wrapping
         self.spos[0] += PLAYFIELD_WIDTH
             * ((self.spos[0] < 0.0) as u8 as f64
                 + -((self.spos[0] > PLAYFIELD_WIDTH - 1.0) as u8 as f64));
