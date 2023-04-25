@@ -8,6 +8,7 @@ const BG_COLOR: [f32; 4] = [0.1; 4];
 const SNAKE_COLOR: [f32; 4] = [0.3, 0.3, 0.9, 1.0];
 const FOOD_COLOR: [f32; 4] = [0.7, 0.4, 0.1, 1.0];
 const CELL_SIZE: f64 = 20.0;
+const CELL_EDGE_BUFFER: f64 = 2.0;
 const PLAYFIELD_WIDTH: f64 = 640.0 / CELL_SIZE;
 const PLAYFIELD_HEIGHT: f64 = 480.0 / CELL_SIZE;
 const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
@@ -72,15 +73,16 @@ impl GameState {
 
     fn render(&self, args: RenderArgs, gl: &mut GlGraphics) {
         use graphics::{clear, rectangle};
+
         gl.draw(args.viewport(), |c, g| {
             clear(BG_COLOR, g);
             rectangle(
                 SNAKE_COLOR,
                 [
-                    self.spos[0] * CELL_SIZE,
-                    self.spos[1] * CELL_SIZE,
-                    CELL_SIZE,
-                    CELL_SIZE,
+                    self.spos[0] * CELL_SIZE + CELL_EDGE_BUFFER,
+                    self.spos[1] * CELL_SIZE + CELL_EDGE_BUFFER,
+                    CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
+                    CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
                 ],
                 c.transform,
                 g,
@@ -88,10 +90,10 @@ impl GameState {
             rectangle(
                 FOOD_COLOR,
                 [
-                    self.fpos[0] * CELL_SIZE,
-                    self.fpos[1] * CELL_SIZE,
-                    CELL_SIZE,
-                    CELL_SIZE,
+                    self.fpos[0] * CELL_SIZE + CELL_EDGE_BUFFER,
+                    self.fpos[1] * CELL_SIZE + CELL_EDGE_BUFFER,
+                    CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
+                    CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
                 ],
                 c.transform,
                 g,
