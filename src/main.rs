@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use glfw_window::GlfwWindow;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::*;
@@ -17,7 +19,7 @@ const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
 struct GameState {
     spos: [f64; 2],
     sdir: [f64; 2],
-    tail: Vec<[f64; 2]>,
+    tail: VecDeque<[f64; 2]>,
     tail_length: isize,
     fpos: [f64; 2],
     interval_time: f64,
@@ -28,7 +30,7 @@ impl GameState {
         GameState {
             spos: [16.0, 12.0],
             sdir: [0.0; 2],
-            tail: vec![],
+            tail: Vec::new().into(),
             tail_length: 0,
             fpos: [8.0; 2],
             interval_time: 0.0,
@@ -76,7 +78,18 @@ impl GameState {
         if self.spos == self.fpos {
             self.randomize_food();
             self.tail_length += 1;
+            self.tail.push_back(self.spos);
         }
+    }
+
+    // Call before updating snake position
+    fn update_tail(&mut self) {
+        if self.tail_length == 0 {
+            return;
+        }
+        self.tail.push_back(self.spos);
+        self.tail.rotate_right(1);
+        self.tail.pop_back();
     }
 
     fn update(&mut self, dt: f64) {
@@ -84,6 +97,9 @@ impl GameState {
             return;
         }
 
+        println!("{:?}, {:?}", self.spos, self.tail);
+
+        self.update_tail();
         self.update_snake_position();
         self.check_food_collisision();
     }
