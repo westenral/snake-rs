@@ -24,11 +24,11 @@ struct GameState {
 impl GameState {
     fn new() -> Self {
         GameState {
-            spos: [0.0; 2],
+            spos: [16.0, 12.0],
             sdir: [0.0; 2],
             tail: vec![],
             tail_length: 0,
-            fpos: [0.0; 2],
+            fpos: [8.0; 2],
             interval_time: 0.0,
         }
     }
