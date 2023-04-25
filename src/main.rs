@@ -97,8 +97,6 @@ impl GameState {
             return;
         }
 
-        println!("{:?}, {:?}", self.spos, self.tail);
-
         self.update_tail();
         self.update_snake_position();
         self.check_food_collisision();
@@ -122,17 +120,23 @@ impl GameState {
 
         gl.draw(args.viewport(), |c, g| {
             clear(BG_COLOR, g);
-            rectangle(
-                SNAKE_COLOR,
-                [
-                    self.spos[0] * CELL_SIZE + CELL_EDGE_BUFFER,
-                    self.spos[1] * CELL_SIZE + CELL_EDGE_BUFFER,
-                    CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
-                    CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
-                ],
-                c.transform,
-                g,
-            );
+            let mut tail_vec_deque = self.tail.clone();
+            tail_vec_deque.push_front(self.spos);
+            let tail_vec: Vec<[f64; 2]> = tail_vec_deque.into();
+
+            for segment in tail_vec {
+                rectangle(
+                    SNAKE_COLOR,
+                    [
+                        segment[0] * CELL_SIZE + CELL_EDGE_BUFFER,
+                        segment[1] * CELL_SIZE + CELL_EDGE_BUFFER,
+                        CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
+                        CELL_SIZE - 2.0 * CELL_EDGE_BUFFER,
+                    ],
+                    c.transform,
+                    g,
+                );
+            }
             rectangle(
                 FOOD_COLOR,
                 [
