@@ -10,10 +10,10 @@ use rand::prelude::*;
 const BG_COLOR: [f32; 4] = [0.1; 4];
 const SNAKE_COLOR: [f32; 4] = [0.3, 0.3, 0.9, 1.0];
 const FOOD_COLOR: [f32; 4] = [0.7, 0.4, 0.1, 1.0];
-const CELL_SIZE: f64 = 40.0;
-const CELL_EDGE_BUFFER: f64 = 2.0;
+const CELL_SIZE: f64 = 80.0;
+const CELL_EDGE_BUFFER: f64 = 8.0;
 const SCREEN_WIDTH: f64 = 1280.0;
-const SCREEN_HEIGHT: f64 = 720.0;
+const SCREEN_HEIGHT: f64 = 800.0;
 const PLAYFIELD_WIDTH: f64 = SCREEN_WIDTH / CELL_SIZE;
 const PLAYFIELD_HEIGHT: f64 = SCREEN_HEIGHT / CELL_SIZE;
 const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
@@ -21,14 +21,17 @@ const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
 struct GameState {
     is_paused: bool,
     is_game_running: bool,
+    interval_time: f64,
+
     spos: [f64; 2],
     pspos: [f64; 2],
     sdir: [f64; 2],
     next_sdir: [f64; 2],
+
     tail: VecDeque<[f64; 2]>,
     tail_length: isize,
+
     fpos: [f64; 2],
-    interval_time: f64,
 }
 
 impl GameState {
@@ -148,6 +151,11 @@ impl GameState {
             Button::Keyboard(Key::A) => self.next_sdir = [-1.0, 0.0],
             Button::Keyboard(Key::S) => self.next_sdir = [0.0, 1.0],
             Button::Keyboard(Key::W) => self.next_sdir = [0.0, -1.0],
+            Button::Keyboard(Key::Space) => {
+                if !self.is_game_running {
+                    *self = GameState::new();
+                }
+            }
             _ => {}
         }
     }
