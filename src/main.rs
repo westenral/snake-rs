@@ -19,6 +19,7 @@ const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
 struct GameState {
     spos: [f64; 2],
     sdir: [f64; 2],
+    next_sdir: [f64; 2],
     tail: VecDeque<[f64; 2]>,
     tail_length: isize,
     fpos: [f64; 2],
@@ -30,6 +31,7 @@ impl GameState {
         GameState {
             spos: [16.0, 12.0],
             sdir: [0.0; 2],
+            next_sdir: [0.0; 2],
             tail: Vec::new().into(),
             tail_length: 0,
             fpos: [8.0; 2],
@@ -60,6 +62,17 @@ impl GameState {
         }
         self.interval_time -= UPDATE_INTERVAL;
         return true;
+    }
+
+    fn limit_direction(&mut self) {
+        let dir_diff = [
+            self.sdir[0] + self.next_sdir[0],
+            self.sdir[1] + self.next_sdir[1],
+        ];
+        if dir_diff == [0.0, 0.0] {
+            self.next_sdir = self.sdir;
+        }
+        self.sdir = self.next_sdir;
     }
 
     fn update_snake_position(&mut self) {
@@ -98,6 +111,7 @@ impl GameState {
         }
 
         self.update_tail();
+        self.limit_direction();
         self.update_snake_position();
         self.check_food_collisision();
     }
@@ -107,10 +121,10 @@ impl GameState {
             return;
         }
         match args.button {
-            Button::Keyboard(Key::D) => self.sdir = [1.0, 0.0],
-            Button::Keyboard(Key::A) => self.sdir = [-1.0, 0.0],
-            Button::Keyboard(Key::S) => self.sdir = [0.0, 1.0],
-            Button::Keyboard(Key::W) => self.sdir = [0.0, -1.0],
+            Button::Keyboard(Key::D) => self.next_sdir = [1.0, 0.0],
+            Button::Keyboard(Key::A) => self.next_sdir = [-1.0, 0.0],
+            Button::Keyboard(Key::S) => self.next_sdir = [0.0, 1.0],
+            Button::Keyboard(Key::W) => self.next_sdir = [0.0, -1.0],
             _ => {}
         }
     }
