@@ -108,7 +108,7 @@ impl GameState {
         if self.spos == self.fpos {
             self.randomize_food();
             self.tail_length += 1;
-            self.tail.push_back(self.pspos);
+            self.tail.push_front(self.pspos);
         }
     }
 
@@ -153,7 +153,7 @@ impl GameState {
             tail_vec_deque.push_front(self.spos);
             let tail_vec: Vec<[f64; 2]> = tail_vec_deque.into();
 
-            for segment in tail_vec {
+            for segment in &tail_vec {
                 rectangle(
                     SNAKE_COLOR,
                     [
@@ -167,11 +167,26 @@ impl GameState {
                 );
             }
 
-            /*
-            for section in tail_vec.windows(3) {
-
+            'connections: for section in tail_vec.windows(2) {
+                if (section[0][0] - section[1][0]).abs() > 1.0
+                    || (section[0][1] - section[1][1]).abs() > 1.0
+                {
+                    continue 'connections;
+                }
+                graphics::rectangle_from_to(
+                    SNAKE_COLOR,
+                    [
+                        section[0][0] * CELL_SIZE + CELL_EDGE_BUFFER,
+                        section[0][1] * CELL_SIZE + CELL_EDGE_BUFFER,
+                    ],
+                    [
+                        (section[1][0] + 1.0) * CELL_SIZE - CELL_EDGE_BUFFER,
+                        (section[1][1] + 1.0) * CELL_SIZE - CELL_EDGE_BUFFER,
+                    ],
+                    c.transform,
+                    g,
+                );
             }
-                */
 
             rectangle(
                 FOOD_COLOR,
