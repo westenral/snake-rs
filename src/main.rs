@@ -55,6 +55,10 @@ impl GameState {
         self.spos[1] += PLAYFIELD_HEIGHT
             * ((self.spos[1] < 0.0) as u8 as f64
                 + -((self.spos[1] > PLAYFIELD_HEIGHT - 1.0) as u8 as f64));
+
+        if self.spos == self.fpos {
+            self.randomize_food();
+        }
     }
 
     fn button_event(&mut self, args: ButtonArgs) {
