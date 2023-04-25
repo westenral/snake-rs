@@ -6,6 +6,7 @@ use piston::window::WindowSettings;
 
 const BG_COLOR: [f32; 4] = [0.1; 4];
 const SNAKE_COLOR: [f32; 4] = [0.3, 0.3, 0.9, 1.0];
+const FOOD_COLOR: [f32; 4] = [0.7, 0.4, 0.1, 1.0];
 const CELL_SIZE: f64 = 20.0;
 const PLAYFIELD_WIDTH: f64 = 640.0 / CELL_SIZE;
 const PLAYFIELD_HEIGHT: f64 = 480.0 / CELL_SIZE;
@@ -84,6 +85,17 @@ impl GameState {
                 c.transform,
                 g,
             );
+            rectangle(
+                FOOD_COLOR,
+                [
+                    self.fpos[0] * CELL_SIZE,
+                    self.fpos[1] * CELL_SIZE,
+                    CELL_SIZE,
+                    CELL_SIZE,
+                ],
+                c.transform,
+                g,
+            );
         })
     }
 }
@@ -102,7 +114,7 @@ fn main() {
 
     let mut gamestate = GameState::new();
 
-    let mut events = Events::new(EventSettings::new());
+    let mut events = Events::new(EventSettings::new().ups(60));
     while let Some(e) = events.next(&mut window) {
         // activates on press or release
         if let Some(args) = e.button_args() {
