@@ -19,6 +19,7 @@ const PLAYFIELD_HEIGHT: f64 = SCREEN_HEIGHT / CELL_SIZE;
 const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
 
 struct GameState {
+    is_paused: bool,
     is_game_running: bool,
     spos: [f64; 2],
     pspos: [f64; 2],
@@ -33,6 +34,7 @@ struct GameState {
 impl GameState {
     fn new() -> Self {
         GameState {
+            is_paused: false,
             is_game_running: true,
             spos: [PLAYFIELD_WIDTH / 2.0, PLAYFIELD_HEIGHT / 2.0],
             pspos: [PLAYFIELD_WIDTH / 2.0, PLAYFIELD_HEIGHT / 2.0],
@@ -117,7 +119,7 @@ impl GameState {
     }
 
     fn update(&mut self, dt: f64) {
-        if !self.is_game_running {
+        if !self.is_game_running || self.is_paused {
             return;
         }
         if !self.check_if_past_timestep(dt) {
@@ -133,6 +135,12 @@ impl GameState {
 
     fn button_event(&mut self, args: ButtonArgs) {
         if args.state == ButtonState::Release {
+            return;
+        }
+        if args.button == Button::Keyboard(Key::Escape) {
+            self.is_paused ^= true
+        };
+        if self.is_paused {
             return;
         }
         match args.button {
@@ -206,7 +214,6 @@ impl GameState {
 fn main() {
     let opengl = OpenGL::V3_2;
     let mut window: GlfwWindow = WindowSettings::new("Snake", [SCREEN_WIDTH, SCREEN_HEIGHT])
-        .exit_on_esc(true)
         .resizable(false)
         .graphics_api(opengl)
         .vsync(true)
