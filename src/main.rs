@@ -95,6 +95,7 @@ fn main() {
         .exit_on_esc(true)
         .resizable(false)
         .graphics_api(opengl)
+        .vsync(true)
         .build()
         .unwrap();
 
