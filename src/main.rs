@@ -1,9 +1,4 @@
-use std::ops::Add;
-use std::ops::AddAssign;
-
 use glfw_window::GlfwWindow;
-use graphics::Context;
-//use graphics::{Context, Graphics, Transformed};
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::*;
 use piston::input::*;
