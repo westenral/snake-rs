@@ -111,7 +111,6 @@ impl GameState {
     }
 
     fn tail_collision(&mut self) {
-        println!("{:?}, {:?}", self.spos, self.tail);
         self.is_game_running = !self.tail.contains(&self.spos)
     }
 
