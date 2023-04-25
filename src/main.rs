@@ -51,13 +51,16 @@ impl GameState {
         ]
     }
 
-    fn update(&mut self, dt: f64) {
+    fn check_if_past_timestep(&mut self, dt: f64) -> bool {
         self.interval_time += dt;
         if self.interval_time < UPDATE_INTERVAL {
-            return;
+            return false;
         }
         self.interval_time -= UPDATE_INTERVAL;
+        return true;
+    }
 
+    fn update_snake_position(&mut self) {
         self.spos[0] += self.sdir[0];
         self.spos[1] += self.sdir[1];
         // branchless screen wrapping
@@ -67,11 +70,22 @@ impl GameState {
         self.spos[1] += PLAYFIELD_HEIGHT
             * ((self.spos[1] < 0.0) as u8 as f64
                 + -((self.spos[1] > PLAYFIELD_HEIGHT - 1.0) as u8 as f64));
+    }
 
+    fn check_food_collisision(&mut self) {
         if self.spos == self.fpos {
             self.randomize_food();
             self.tail_length += 1;
         }
+    }
+
+    fn update(&mut self, dt: f64) {
+        if !self.check_if_past_timestep(dt) {
+            return;
+        }
+
+        self.update_snake_position();
+        self.check_food_collisision();
     }
 
     fn button_event(&mut self, args: ButtonArgs) {
