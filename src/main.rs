@@ -24,7 +24,7 @@ struct GameState {
     interval_time: f64,
 
     spos: [f64; 2],
-    pspos: [f64; 2],
+    pspos: [f64; 2], // past snake pos
     sdir: [f64; 2],
     next_sdir: [f64; 2],
 
@@ -222,6 +222,7 @@ impl GameState {
 }
 
 fn main() {
+    // piston init
     let opengl = OpenGL::V3_2;
     let mut window: GlfwWindow = WindowSettings::new("Snake", [SCREEN_WIDTH, SCREEN_HEIGHT])
         .resizable(false)
