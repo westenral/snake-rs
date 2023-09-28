@@ -18,10 +18,16 @@ const PLAYFIELD_WIDTH: f64 = SCREEN_WIDTH / CELL_SIZE;
 const PLAYFIELD_HEIGHT: f64 = SCREEN_HEIGHT / CELL_SIZE;
 const UPDATE_INTERVAL: f64 = 1.0 / 4.0;
 
+enum RenderMode {
+    Fixed,
+    Follow,
+}
+
 struct GameState {
     is_paused: bool,
     is_game_running: bool,
     interval_time: f64,
+    render_mode: RenderMode,
 
     spos: [f64; 2],
     pspos: [f64; 2],
@@ -47,6 +53,7 @@ impl GameState {
             tail_length: 0,
             fpos: [PLAYFIELD_WIDTH / 2.0 - 4.0, PLAYFIELD_HEIGHT / 2.0 - 4.0],
             interval_time: 0.0,
+            render_mode: RenderMode::Fixed,
         }
     }
 
